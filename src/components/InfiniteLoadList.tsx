@@ -1,22 +1,20 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
 
-export default function InfiniteLoadList({ data, chunkSize }: any) {
-  const [page, setPage] = useState(1);
+interface IProps {
+  data: Array<number>;
+  chunkSize: number;
+}
 
-  console.log("PAGE", page);
+export default function InfiniteLoadList({ data, chunkSize }: IProps) {
+  const [page, setPage] = useState(1);
+  const [listData, setListData] = useState(data);
 
   const numberOfItemsToShow = page * chunkSize;
-  const dataToShow = useMemo(() => data.slice(0, numberOfItemsToShow), [page]);
-
-  console.log("DATA TO SHOW", dataToShow);
+  const MAX_PAGES = Math.ceil(data.length / chunkSize);
 
   const target = useRef(null);
 
-  const loadMore = (entries: any) => {
-    const entry = entries[0];
-    if (entry.isIntersecting) setPage((prev) => prev + 1);
-  };
-
+  //   HANDLE OBSERVER
   useEffect(() => {
     if (!target.current) return;
     const observer = new IntersectionObserver(loadMore, { threshold: 1 });
@@ -27,14 +25,29 @@ export default function InfiniteLoadList({ data, chunkSize }: any) {
     };
   }, [target]);
 
+  //   HANDLE UNLIMITED ADDITIONAL GENERATION
+  useEffect(() => {
+    if (page >= MAX_PAGES) {
+      const moreData = Array.from(Array(100).keys());
+      setListData((prev: any) => [...prev, ...moreData]);
+    }
+  }, [page]);
+
+  //   SET DATA TO SHOW
+  const dataToShow = useMemo(() => {
+    return listData.slice(0, numberOfItemsToShow);
+  }, [page, listData]);
+
+  const loadMore = (entries: any) => {
+    const entry = entries[0];
+    if (entry.isIntersecting) setPage((prev) => prev + 1);
+  };
+
   return (
     <div>
       <div>
-        {" "}
-        {dataToShow.map((item: any, index: any) => {
-          if (index === numberOfItemsToShow - 1) {
-            return <div className="last">{item}</div>;
-          } else return <div className="regular-item">{item}</div>;
+        {dataToShow.map((item: number, index: number) => {
+          return <div className="list-item">{item}</div>;
         })}
       </div>
       <div ref={target}></div>

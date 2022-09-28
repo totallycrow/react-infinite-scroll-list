@@ -3,7 +3,7 @@ import logo from "./logo.svg";
 import "./App.css";
 
 import InfiniteLoadList from "./components/InfiniteLoadList";
-const sampleDataSet = Array.from(Array(1000).keys());
+const sampleDataSet = Array.from(Array(300).keys());
 function App() {
   const sampleData = useMemo(() => sampleDataSet, []);
 
@@ -11,7 +11,7 @@ function App() {
     <div>
       <h1>Inifite Load</h1>
       <div>
-        <InfiniteLoadList data={sampleData} chunkSize="100" />
+        <InfiniteLoadList data={sampleData} chunkSize={100} />
       </div>
     </div>
   );

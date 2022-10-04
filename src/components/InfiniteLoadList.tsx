@@ -31,12 +31,12 @@ export default function InfiniteLoadList({ data, chunkSize }: IProps) {
       const moreData = Array.from(Array(100).keys());
       setListData((prev: any) => [...prev, ...moreData]);
     }
-  }, [page]);
+  }, [page, MAX_PAGES]);
 
   //   SET DATA TO SHOW
   const dataToShow = useMemo(() => {
     return listData.slice(0, numberOfItemsToShow);
-  }, [page, listData]);
+  }, [listData, numberOfItemsToShow]);
 
   const loadMore = (entries: any) => {
     const entry = entries[0];
@@ -47,7 +47,11 @@ export default function InfiniteLoadList({ data, chunkSize }: IProps) {
     <div>
       <div>
         {dataToShow.map((item: number, index: number) => {
-          return <div className="list-item">{item}</div>;
+          return (
+            <div className="list-item" key={item}>
+              {item}
+            </div>
+          );
         })}
       </div>
       <div ref={target}></div>

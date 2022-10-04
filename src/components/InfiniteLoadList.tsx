@@ -20,7 +20,7 @@ export default function InfiniteLoadList({ data, chunkSize }: IProps) {
           );
         })}
       </div>
-      <div ref={target}></div>
+      <div ref={target as React.RefObject<HTMLDivElement>}></div>
     </div>
   );
 }

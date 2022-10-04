@@ -1,13 +1,16 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 
-export default function useInfiniteLoad(data: any, chunkSize: any) {
+export default function useInfiniteLoad(
+  data: Array<number>,
+  chunkSize: number
+): [Array<number>, React.RefObject<HTMLDivElement>] {
   const [page, setPage] = useState(1);
   const [listData, setListData] = useState(data);
 
   const numberOfItemsToShow = page * chunkSize;
   const MAX_PAGES = Math.ceil(data.length / chunkSize);
 
-  const target = useRef(null);
+  const target = useRef<HTMLDivElement>(null);
 
   //   HANDLE OBSERVER
   useEffect(() => {
@@ -24,7 +27,7 @@ export default function useInfiniteLoad(data: any, chunkSize: any) {
   useEffect(() => {
     if (page >= MAX_PAGES) {
       const moreData = Array.from(Array(100).keys());
-      setListData((prev: any) => [...prev, ...moreData]);
+      setListData((prev) => [...prev, ...moreData]);
     }
   }, [page, MAX_PAGES]);
 
@@ -33,7 +36,7 @@ export default function useInfiniteLoad(data: any, chunkSize: any) {
     return listData.slice(0, numberOfItemsToShow);
   }, [listData, numberOfItemsToShow]);
 
-  const loadMore = (entries: any) => {
+  const loadMore = (entries: Array<IntersectionObserverEntry>) => {
     const entry = entries[0];
     if (entry.isIntersecting) setPage((prev) => prev + 1);
   };
